@@ -20,7 +20,7 @@ app.use(async (req, res, next) => {
 });
 
 // Middleware
-app.use(cors({ origin: "https://gravity-yhoj.vercel.app" }));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 // Serve uploaded images
