@@ -7,13 +7,20 @@ const connectDB = require('./config/db');
 // Load env vars
 dotenv.config();
 
-// Connect to database
-connectDB();
-
 const app = express();
 
+// Connect to database on each request (reuses existing connection if available)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: 'Database connection failed' });
+  }
+});
+
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "https://gravity-yhoj.vercel.app" }));
 app.use(express.json());
 
 // Serve uploaded images
