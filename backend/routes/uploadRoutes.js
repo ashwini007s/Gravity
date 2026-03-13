@@ -1,14 +1,24 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+// Use /tmp for Vercel (writable) or 'uploads/' for local dev
+const isVercel = process.env.VERCEL === '1';
+const uploadDir = isVercel ? '/tmp/uploads' : 'uploads/';
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // Configure storage
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   filename(req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
